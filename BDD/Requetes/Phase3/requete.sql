@@ -90,8 +90,49 @@ JOIN fournis ON entcom.numfou = fournis.numfou
 WHERE numcom LIKE '70210'
 GROUP BY nomfou
 
+/* A TEST */
 14.
-SELECT codart , 
+SELECT libart, prix1
 FROM produit
 JOIN vente ON produit.codart = vente.codart
 WHERE priuni < prix1
+
+15.
+SELECT nomfou, codart
+FROM produit
+JOIN vente ON vente.codart = produit.codart
+JOIN fournis ON fournis.numfou = vente.numfou
+WHERE stkphy <= (stkale * 1.5)
+ORDER BY nomfou DESC, codart DESC
+
+16.
+SELECT nomfou, codart
+FROM produit
+JOIN vente ON vente.codart = produit.codart
+JOIN fournis ON fournis.numfou = vente.numfou
+WHERE stkphy <= (stkale * 1.5) AND delliv <= 30
+ORDER BY nomfou DESC, codart DESC
+
+17.
+SELECT nomfou, codart, SUM(stkphy)
+FROM produit
+JOIN vente ON vente.codart = produit.codart
+JOIN fournis ON fournis.numfou = vente.numfou
+WHERE stkphy <= (stkale * 1.5) AND delliv <= 30
+GROUP BY nomfou
+ORDER BY nomfou DESC, codart DESC
+
+18.
+SELECT codart, libart
+FROM produit
+JOIN ligcom ON produit.codart = ligcom.codart
+where 100*qtecde/qteann < qteann*0.9 and derliv LIKE'%-12-%'
+group by libart
+
+19
+SELECT nomfou, SUM(qtecde * priuni * 0.2) AS CA
+FROM ligcom
+JOIN entcom ON entcom.numcom = ligcom.numcom
+JOIN fournis ON entcom.numfou = fourni.numfou
+WHERE datcom LIKE '__93-%-%'
+GROUP BY nomfou
