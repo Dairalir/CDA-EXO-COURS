@@ -1,0 +1,53 @@
+1.
+DELIMITER |
+
+CREATE PROCEDURE Lst_fournis()
+BEGIN
+    SELECT numfou FROM entcom
+    WHERE datcom IS NOT NULL;
+END |
+DELIMITER ;
+
+2.
+DELIMITER |
+
+CREATE PROCEDURE Lst_Commande(In commande Varchar(50))
+
+BEGIN
+    SELECT produit.codart, obscom, entcom.numcom, SUM(qtecde*priuni) AS sous_total
+    FROM produit
+    JOIN ligcom ON produit.codart = ligcom.codart
+    JOIN entcom ON ligcom.numcom = entcom.numcom
+    WHERE obscom = commande
+    GROUP BY produit.codart;
+END |
+DELIMITER ;
+
+3.
+CREATE PROCEDURE CA_Fournisseur(
+    In fourni varchar (50)
+    In année year )
+BEGIN
+    SELECT nomfou, SUM(qtecde * priuni * 0.2) AS CA
+    FROM ligcom
+    JOIN entcom ON entcom.numcom = ligcom.numcom
+    JOIN fournis ON entcom.numfou = fourni.numfou
+    WHERE nomfou = fourni, datcom = année ;
+    END |
+DELIMITER ;
+
+DELIMITER |
+
+4.
+CREATE PROCEDURE CA_Fournisseur(IN CodeF int, Annee YEAR)
+BEGIN
+    SELECT fournis.nomfou, SUM(qtecde * priuni * 0.2) AS CA
+    FROM ligcom
+    JOIN entcom ON entcom.numcom = ligcom.numcom
+    JOIN fournis ON entcom.numfou = fournis.numfou
+    WHERE Year(entcom.datcom) = Annee AND fournis.numfou = CodeF
+    GROUP BY nomfou;
+END |
+
+DELIMITER ;
+

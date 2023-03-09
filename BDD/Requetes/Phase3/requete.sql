@@ -106,7 +106,7 @@ WHERE stkphy <= (stkale * 1.5)
 ORDER BY nomfou DESC, codart DESC
 
 16.
-SELECT nomfou, codart
+SELECT nomfou, produit.codart
 FROM produit
 JOIN vente ON vente.codart = produit.codart
 JOIN fournis ON fournis.numfou = vente.numfou
@@ -114,7 +114,7 @@ WHERE stkphy <= (stkale * 1.5) AND delliv <= 30
 ORDER BY nomfou DESC, codart DESC
 
 17.
-SELECT nomfou, codart, SUM(stkphy)
+SELECT nomfou, produit.codart, SUM(stkphy)
 FROM produit
 JOIN vente ON vente.codart = produit.codart
 JOIN fournis ON fournis.numfou = vente.numfou
@@ -123,11 +123,12 @@ GROUP BY nomfou
 ORDER BY nomfou DESC, codart DESC
 
 18.
-SELECT codart, libart
+SELECT produit.codart, libart
 FROM produit
 JOIN ligcom ON produit.codart = ligcom.codart
 where 100*qtecde/qteann < qteann*0.9 and derliv LIKE'%-12-%'
 group by libart
+
 
 19
 SELECT nomfou, SUM(qtecde * priuni * 0.2) AS CA
