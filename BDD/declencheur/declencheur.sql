@@ -13,6 +13,7 @@ END|
 /*1.*/
 DELIMITER |
 CREATE OR REPLACE TRIGGER modif_reservation BEFORE UPDATE ON hotel.reservation
+FOR EACH ROW
     BEGIN
         SIGNAL SQLSTATE '40000' SET MESSAGE_TEXT = 'Un problème est survenu. Personne ne peu modifier les reservation';
 END |
@@ -39,9 +40,7 @@ CREATE TRIGGER insert_reservation BEFORE INSERT ON reservation
         IF NombreChambre >= 10 THEN
             SIGNAL SQLSTATE '40000' SET MESSAGE_TEXT = 'Un problème est survenu. hotel reservation supérieur a 10 !';
         END IF;
-END|
-
-/*3*/
+END|stk_ale_prod
 DELIMITER |
 
 CREATE TRIGGER insert_reservation2 BEFORE INSERT ON reservation
@@ -93,7 +92,7 @@ END|
 
 DELIMITER |
 
-CREATE TRIGGER maj_total AFTER INSERT ON lignedecommande
+CREATE TRIGGER maj_total AFTER UPDATE ON lignedecommande
     FOR EACH ROW
     BEGIN
         DECLARE id_c INT;
