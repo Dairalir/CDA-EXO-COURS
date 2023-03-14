@@ -13,7 +13,6 @@ END|
 /*1.*/
 DELIMITER |
 CREATE OR REPLACE TRIGGER modif_reservation BEFORE UPDATE ON hotel.reservation
-    FOR EACH ROW
     BEGIN
         SIGNAL SQLSTATE '40000' SET MESSAGE_TEXT = 'Un problème est survenu. Personne ne peu modifier les reservation';
 END |
@@ -36,8 +35,8 @@ CREATE TRIGGER insert_reservation BEFORE INSERT ON reservation
         SET NombreChambre = (SELECT COUNT(res_cha_id) 
                             FROM reservation 
                             JOIN chambre ON chambre.cha_id = reservation.res_cha_id 
-                            GROUP BY cha_hot_id)
-        IF NombreChambre < 10 THEN
+                            WHERE reservation.res_cha_id = NEW.res_cha_id)
+        IF NombreChambre >= 10 THEN
             SIGNAL SQLSTATE '40000' SET MESSAGE_TEXT = 'Un problème est survenu. hotel reservation supérieur a 10 !';
         END IF;
 END|
@@ -52,8 +51,8 @@ CREATE TRIGGER insert_reservation2 BEFORE INSERT ON reservation
         SET NombreChambreClient = ( SELECT COUNT(res_cha_id)
                                     FROM reservation
                                     JOIN client ON res_cli_id = client.cli_id
-                                    GROUP BY cli_id)
-        IF NombreChambreClient < 3 THEN
+                                    WHERE res_cli_id = NEW.res_cli_id)
+        IF NombreChambreClient >= 3 THEN
             SIGNAL SQLSTATE '40000' SET MESSAGE_TEXT = 'Un problème est survenu. client reservation supérieur a 3 !';
         END IF;
 END|
@@ -87,7 +86,8 @@ CREATE TRIGGER maj_total AFTER INSERT ON lignedecommande
         DECLARE id_c INT;
         DECLARE tot DOUBLE;
         SET id_c = NEW.id_commande; -- nous captons le numéro de commande concerné
-        SET tot = (SELECT sum(prix*quantite) FROM lignedecommande WHERE id_commande=id_c); -- on recalcul le total
+        SET rem = (SELECT remise FROM commande WHERE commande.id = NEW.id_commande)
+        SET tot = (SELECT sum((prix*quantite) - rem) FROM lignedecommande WHERE id_commande=id_c); -- on recalcul le total
         UPDATE commande SET total=tot WHERE id=id_c; -- on stocke le total dans la table commande
 END|
 
